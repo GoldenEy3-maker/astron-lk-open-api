@@ -61,10 +61,6 @@ components:
   schemas:
     User:
       type: object
-      required:
-        - id
-        - name
-        - email
       properties:
         id:
           type: string
