@@ -17,7 +17,7 @@ app.get("/schema", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  const ui = generateScalarUI("/schema");
+  const ui = generateScalarUI("/api-schema.json");
   res.type("html").send(ui);
 });
 
