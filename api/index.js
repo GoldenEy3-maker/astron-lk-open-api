@@ -6,7 +6,7 @@ app.use(express.static("public"));
 const port = 8080;
 
 app.get("/", (req, res) => {
-  const ui = generateScalarUI("/api-schema.json");
+  const ui = generateScalarUI("/schema.json");
   res.type("html").send(ui);
 });
 
