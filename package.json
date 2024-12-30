@@ -1,0 +1,15 @@
+{
+  "name": "astron-lk-open-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "openapi-metadata": "^0.1.1"
+  }
+}
