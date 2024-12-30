@@ -6,7 +6,7 @@ const app = express();
 const port = 8080;
 
 app.get("/schema", (req, res) => {
-  readFile("api-schema.json", (err, data) => {
+  readFile("../api-schema.json", (err, data) => {
     if (err) {
       res.status(500).send({ error: "Failed to read API schema file" });
       return;
