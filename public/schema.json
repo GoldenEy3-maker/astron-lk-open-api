@@ -1,14 +1,18 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "User API",
-    "description": "API для получения и создания пользователей",
+    "title": "Астрон личный кабинет API",
+    "description": "API для работы личного кабинета Астрон",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
+      "url": "http://localhost:3000",
       "description": "Локальный сервер"
+    },
+    {
+      "url": "https://astronbuildings.com",
+      "description": "Боевой сервер"
     }
   ],
   "paths": {
@@ -30,32 +34,50 @@
             }
           }
         }
+      }
+    },
+    "/news": {
+      "get": {
+        "summary": "Получить список новостей",
+
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/News"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "post": {
-        "summary": "Создать нового пользователя",
+        "summary": "Создать новую новость",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/News"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Пользователь успешно создан",
+          "200": {
+            "description": "Успешный ответ",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/News"
                 }
               }
             }
-          },
-          "400": {
-            "description": "Неверный запрос"
           }
         }
       }
@@ -77,10 +99,28 @@
           "email": {
             "type": "string",
             "example": "johndoe@example.com"
+          }
+        }
+      },
+      "News": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1"
           },
-          "views": {
-            "type": "integer",
-            "example": 100
+          "title": {
+            "type": "string",
+            "example": "Ключевая ставка достигла 30%"
+          },
+          "description": {
+            "type": "string",
+            "example": "Деняк нет, но вы держитесь"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-12-30",
+            "format": "date"
           }
         }
       }
