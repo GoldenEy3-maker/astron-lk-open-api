@@ -9,27 +9,49 @@ servers:
   - url: https://astronbuildings.com
     description: Боевой сервер
 paths:
-  "/users":
-    get:
-      summary: Получить список пользователей
-      operationId: listUsers
+  /login:
+    post:
+      summary: Аутентификация
+      operationId: login
       tags:
-        - users
+        - Пользователь
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                  example: dev@mail.ru
+                password:
+                  type: string
+                  example: password
+                remember:
+                  type: boolean
       responses:
         "200":
           description: Успешный ответ
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-  "/news":
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Неверный логин или пароль
+  /news:
     get:
       summary: Получить список новостей
       operationId: listNews
       tags:
-        - news
+        - Новости
       responses:
         "200":
           description: Успешный ответ
@@ -39,24 +61,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/News"
-    post:
-      summary: Создать новую новость
-      operationId: createPost
-      tags:
-        - news
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/News"
-      responses:
-        "200":
-          description: Успешный ответ
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/News"
+      security:
+        - bearerAuth: []
 components:
   schemas:
     User:
@@ -65,12 +71,18 @@ components:
         id:
           type: string
           example: "1"
+        surname:
+          type: string
+          example: Королев
         name:
           type: string
-          example: John Doe
+          example: Данил
+        patronymic:
+          type: string
+          example: Николаевич
         email:
           type: string
-          example: johndoe@example.com
+          example: dev@mail.ru
     News:
       type: object
       properties:
@@ -87,3 +99,8 @@ components:
           type: string
           example: "2024-12-30"
           format: date
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
