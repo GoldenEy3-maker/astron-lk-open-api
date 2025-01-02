@@ -9,7 +9,7 @@ servers:
   - url: https://astronbuildings.com
     description: Боевой сервер
 paths:
-  /login:
+  /api/login:
     post:
       summary: Аутентификация
       operationId: login
@@ -35,7 +35,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        "400":
+          description: Ошибка ввода данных
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Неверный логин или пароль
+        "403":
+          description: Пользователь забанен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ваш аккаунт заблокирован
+  /api/refreshToken:
+    get:
+      summary: Обновление токенов
+      operationId: refreshToken
+      tags:
+        - Пользователь
+      parameters:
+        - name: refreshToken
+          in: cookie
+          description: Refresh Token с клиента
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Refresh token is invalid
+  /api/restorePassword:
+    post:
+      summary: Восстановление пароля
+      operationId: restoreUserPassword
+      tags:
+        - Пользователь
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        "200":
+          description: Пароль успешно изменен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Пароль успешно изменен
         "400":
           description: Ошибка
           content:
@@ -45,8 +126,31 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Неверный логин или пароль
-  /news:
+                    example: Пароли не совпадают
+  /api/getSession:
+    get:
+      summary: Получение сессии
+      operationId: getSession
+      tags:
+        - Пользователь
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Пользователь не авторизован
+  /api/news:
     get:
       summary: Получить список новостей
       operationId: listNews
@@ -83,6 +187,28 @@ components:
         email:
           type: string
           example: dev@mail.ru
+        password:
+          type: string
+          example: 123
+        tokenVersion:
+          type: integer
+        isBanned:
+          type: boolean
+    Session:
+      type: object
+      properties:
+        email:
+          type: string
+          example: dev@mail.ru
+        surname:
+          type: string
+          example: Королев
+        name:
+          type: string
+          example: Данил
+        patronymic:
+          type: string
+          example: Николаевич
     News:
       type: object
       properties:
