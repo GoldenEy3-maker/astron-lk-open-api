@@ -9,10 +9,10 @@ servers:
   - url: https://astronbuildings.com
     description: Боевой сервер
 paths:
-  /api/login:
+  /api/sign-in:
     post:
       summary: Аутентификация
-      operationId: login
+      operationId: signIn
       tags:
         - Пользователь
       requestBody:
@@ -41,9 +41,12 @@ paths:
                 type: object
                 required:
                   - accessToken
+                  - user
                 properties:
                   accessToken:
                     type: string
+                  user:
+                    $ref: "#/components/schemas/Session"
         "400":
           description: Ошибка ввода данных
           content:
@@ -75,7 +78,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /api/refresh:
+  /api/session/refresh:
     get:
       summary: Обновление токенов
       operationId: refreshToken
@@ -103,7 +106,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /api/user/restore:
+  /api/user/restore-password:
     post:
       summary: Восстановление пароля
       operationId: restoreUserPassword
@@ -141,7 +144,7 @@ paths:
   /api/news:
     get:
       summary: Получить список новостей
-      operationId: listNews
+      operationId: getNews
       tags:
         - Новости
       responses:
