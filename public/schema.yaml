@@ -20,6 +20,9 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - login
+                - password
               properties:
                 login:
                   type: string
@@ -36,6 +39,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - accessToken
                 properties:
                   accessToken:
                     type: string
@@ -44,90 +49,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Неверный логин или пароль
+                $ref: "#/components/schemas/Error"
         "403":
           description: Пользователь забанен
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Ваш аккаунт заблокирован
-  /api/refreshToken:
-    get:
-      summary: Обновление токенов
-      operationId: refreshToken
-      tags:
-        - Пользователь
-      parameters:
-        - name: refreshToken
-          in: cookie
-          description: Refresh Token с клиента
-      responses:
-        "200":
-          description: Успешный ответ
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-        "401":
-          description: Ошибка авторизации
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Refresh token is invalid
-  /api/restorePassword:
-    post:
-      summary: Восстановление пароля
-      operationId: restoreUserPassword
-      tags:
-        - Пользователь
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                oldPassword:
-                  type: string
-                newPassword:
-                  type: string
-      responses:
-        "200":
-          description: Пароль успешно изменен
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Пароль успешно изменен
-        "400":
-          description: Ошибка
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Пароли не совпадают
-  /api/getSession:
+                $ref: "#/components/schemas/Error"
+  /api/session:
     get:
       summary: Получение сессии
       operationId: getSession
@@ -145,11 +74,70 @@ paths:
           content:
             application/json:
               schema:
+                $ref: "#/components/schemas/Error"
+  /api/refresh:
+    get:
+      summary: Обновление токенов
+      operationId: refreshToken
+      tags:
+        - Пользователь
+      parameters:
+        - name: refreshToken
+          in: cookie
+          description: Refresh Token с клиента
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
                 type: object
+                required:
+                  - accessToken
                 properties:
-                  message:
+                  accessToken:
                     type: string
-                    example: Пользователь не авторизован
+        "401":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/user/restore:
+    post:
+      summary: Восстановление пароля
+      operationId: restoreUserPassword
+      tags:
+        - Пользователь
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - oldPassword
+                - newPassword
+              properties:
+                email:
+                  type: string
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        "200":
+          description: Пароль успешно изменен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /api/news:
     get:
       summary: Получить список новостей
@@ -171,6 +159,14 @@ components:
   schemas:
     User:
       type: object
+      required:
+        - id
+        - surname
+        - name
+        - email
+        - password
+        - tokenVersion
+        - isBanned
       properties:
         id:
           type: string
@@ -196,6 +192,10 @@ components:
           type: boolean
     Session:
       type: object
+      required:
+        - email
+        - surname
+        - name
       properties:
         email:
           type: string
@@ -211,6 +211,11 @@ components:
           example: Николаевич
     News:
       type: object
+      required:
+        - id
+        - title
+        - description
+        - createdAt
       properties:
         id:
           type: string
@@ -225,6 +230,20 @@ components:
           type: string
           example: "2024-12-30"
           format: date
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    Success:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http
